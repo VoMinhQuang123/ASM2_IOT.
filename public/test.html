@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhận diện hình vuông từ webcam</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+    <style>
+        #canvas {
+            border: 2px solid black;
+        }
+
+        #shape-display {
+            font-size: 20px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Nhận diện hình vuông từ webcam</h1>
+    <video id="webcam" width="640" height="480" autoplay></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <div id="shape-display"></div>
+
+    <script>
+        // Kiểm tra đối tượng có phải hình vuông gần đúng không
+        function isAlmostSquare(bbox) {
+            const width = bbox[2];
+            const height = bbox[3];
+            const aspectRatio = width / height;
+            // Cho phép hình vuông hơi méo (tỷ lệ từ 0.7 đến 1.3)
+            return aspectRatio >= 0.7 && aspectRatio <= 1.3;
+        }
+
+        // Bắt đầu nhận diện hình vuông từ webcam
+        async function startShapeAndColorDetection() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const webcam = document.getElementById('webcam');
+
+            // Vẽ hình ảnh từ webcam lên canvas
+            ctx.drawImage(webcam, 0, 0, canvas.width, canvas.height);
+
+            // Dùng COCO SSD để nhận diện đối tượng
+            const predictions = await cocoSsd.load().then(model => model.detect(webcam));
+
+            let squareDetected = false;
+
+            predictions.forEach(prediction => {
+                // Kiểm tra xem đối tượng có phải là hình vuông hay không
+                if (isAlmostSquare(prediction.bbox)) {
+                    squareDetected = true;
+                }
+
+                // Vẽ bounding box lên canvas
+                ctx.beginPath();
+                ctx.rect(prediction.bbox[0], prediction.bbox[1], prediction.bbox[2], prediction.bbox[3]);
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = 'red';
+                ctx.stroke();
+            });
+
+            // Cập nhật kết quả nhận diện
+            const shapeDisplay = document.getElementById('shape-display');
+            if (squareDetected) {
+                shapeDisplay.textContent = "Hình vuông phát hiện!";
+            } else {
+                shapeDisplay.textContent = "Hình vuông: Không phát hiện";
+            }
+        }
+
+        // Bắt đầu camera
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const webcam = document.getElementById('webcam');
+                webcam.srcObject = stream;
+                webcam.onloadedmetadata = () => {
+                    console.log("Webcam started.");
+                };
+
+                // Gọi hàm nhận diện liên tục khi webcam được cập nhật
+                webcam.addEventListener('play', () => {
+                    setInterval(startShapeAndColorDetection, 100); // Cập nhật liên tục mỗi 100ms
+                });
+            } catch (err) {
+                console.error("Lỗi khi truy cập webcam:", err);
+                document.getElementById('shape-display').textContent = "Không thể truy cập webcam. Vui lòng kiểm tra thiết bị!";
+            }
+        }
+
+        // Bắt đầu camera khi trang được tải
+        window.onload = () => {
+            startCamera();
+        };
+    </script>
+
+</body>
+
+</html>

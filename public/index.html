@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhận diện</title>
+</head>
+
+<body>
+    <h1>Hệ thống nhận diện</h1>
+    <video id="webcam" autoplay playsinline></video>
+    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+
+    <div>
+        <p id="distance-display">Khoảng cách: Chưa nhận</p>
+        <p id="shape-display">Hình dạng: </p>
+        <p id="color-display">Màu sắc: </p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+    <script src="/web/script.js"></script>
+
+</body>
+
+</html>

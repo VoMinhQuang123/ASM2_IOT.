@@ -1,0 +1,77 @@
+body {
+    display: flex;
+    flex-direction: column;
+    background-color: #f0f0f0;
+    padding: 20px;
+    align-items: center;
+}
+
+#camera-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.camera {
+    position: relative;
+    width: 640px;
+    /* Đặt chiều rộng cố định cho camera */
+    height: 480px;
+    /* Đặt chiều cao cố định cho camera */
+    background-color: black;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    /* Đảm bảo canvas không chặn thao tác của video */
+}
+
+#content-container {
+    width: 100%;
+    margin-top: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+#result-container,
+#esp-response-container {
+    margin: 20px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+#results-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+#status-message {
+    margin: 0;
+    color: gray;
+}
+
+#esp-response-container {
+    margin-top: 10px;
+}
+
+#esp-response-message {
+    color: #333;
+}
